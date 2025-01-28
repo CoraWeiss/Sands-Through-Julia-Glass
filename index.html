@@ -78,6 +78,7 @@
             border-radius: 0.5rem;
             padding: 1rem;
             transition: all 0.2s;
+            cursor: pointer;
         }
 
         .card:hover {
@@ -136,7 +137,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="title">1880s Clutter - Archival Objects from 1820-1885s NY/USA</h1>
+            <h1 class="title">1880s Clutter - Archival Objects from 1820-1885 NY/USA</h1>
             <div class="filters">
                 <button class="filter-btn active" data-filter="all">All</button>
                 <button class="filter-btn" data-filter="painting">Paintings</button>
@@ -144,6 +145,8 @@
                 <button class="filter-btn" data-filter="furniture">Furniture</button>
                 <button class="filter-btn" data-filter="sheet music">Sheet Music</button>
                 <button class="filter-btn" data-filter="textile">Textiles</button>
+                <button class="filter-btn" data-filter="letters">Letters</button>
+                <button class="filter-btn" data-filter="presidential archive">Presidential Archives</button>
             </div>
         </div>
         <div class="content">
@@ -152,24 +155,20 @@
     </div>
 
     <script>
-        const data = [
+        // Directly embed the data script here
+        const objectData = [
             {
                 title: "Beauty Revealed",
                 artist: "Sarah Goodridge",
                 date: "1828",
                 type: "Painting",
                 collection: "Met Museum",
-                description: "A self-portrait made for Daniel Webster (1782-1852)"
+                description: "A self-portrait made for Daniel Webster (1782-1852)",
+                url: "https://www.metmuseum.org/art/collection/search/14521"
             },
-            {
-                title: "Armchair",
-                date: "ca. 1835–40",
-                type: "Furniture",
-                collection: "Met Museum",
-                description: "Mahogany, ash, brass sabots and casters"
-            },
-            // ... (continue with all your data items)
+            // ... (rest of the data from the paste.txt file)
         ];
+        window.objectData = objectData;
 
         function getIcon(type) {
             switch(type.toLowerCase()) {
@@ -180,6 +179,12 @@
                     return 'music';
                 case 'furniture':
                     return 'box';
+                case 'textile':
+                    return 'layers';
+                case 'letters':
+                    return 'mail';
+                case 'presidential archive':
+                    return 'archive';
                 default:
                     return 'filter';
             }
@@ -187,7 +192,7 @@
 
         function renderCard(item) {
             return `
-                <div class="card">
+                <div class="card" data-url="${item.url || '#'}">
                     <div class="card-header">
                         <i data-feather="${getIcon(item.type)}" class="card-icon"></i>
                         <div>
@@ -205,11 +210,21 @@
         function renderGrid(filter = 'all') {
             const grid = document.getElementById('grid');
             const filteredData = filter === 'all' 
-                ? data 
-                : data.filter(item => item.type.toLowerCase() === filter.toLowerCase());
+                ? objectData 
+                : objectData.filter(item => item.type.toLowerCase() === filter.toLowerCase());
             
             grid.innerHTML = filteredData.map(renderCard).join('');
             feather.replace();
+
+            // Add click event to open URL
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    if (url && url !== '#') {
+                        window.open(url, '_blank');
+                    }
+                });
+            });
         }
 
         // Initialize
