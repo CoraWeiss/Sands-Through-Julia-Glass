@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import { Search, Filter, Calendar } from 'lucide-react';
+import UploadPhoto from './UploadPhoto';
 
 const MET_API_BASE = 'https://collectionapi.metmuseum.org/public/collection/v1/objects/';
 
@@ -15,6 +16,10 @@ const CollectionExplorer = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [types, setTypes] = useState(['All']);
   const [loading, setLoading] = useState(true);
+
+  const handleAddItem = (newItem) => {
+    setItems(prevItems => [newItem, ...prevItems]);
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -83,6 +88,9 @@ const CollectionExplorer = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-8">1880s Historical Collection</h1>
+        
+        {/* Upload Component */}
+        <UploadPhoto onAddItem={handleAddItem} />
         
         {/* Search Bar */}
         <div className="max-w-md mx-auto mb-8">
