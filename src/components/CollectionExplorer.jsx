@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Filter, Calendar, Grid, Info } from 'lucide-react';
 
 const CollectionExplorer = () => {
@@ -12,8 +11,9 @@ const CollectionExplorer = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const response = await window.fs.readFile('paste.txt', { encoding: 'utf8' });
-        const result = Papa.parse(response, {
+        const response = await fetch('paste.txt');
+        const text = await response.text();
+        const result = Papa.parse(text, {
           header: true,
           skipEmptyLines: true
         });
@@ -61,30 +61,26 @@ const CollectionExplorer = () => {
         {/* Collection Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.map((item, index) => (
-            <Card 
+            <div 
               key={index}
-              className="cursor-pointer hover:shadow-lg transition-shadow"
+              className="border rounded-lg p-4 cursor-pointer hover:shadow-lg transition-shadow bg-white"
               onClick={() => setSelectedItem(item)}
             >
-              <CardHeader>
-                <CardTitle className="text-lg">{item.Title}</CardTitle>
+              <div className="mb-2">
+                <h3 className="text-lg font-semibold">{item.Title}</h3>
                 <div className="flex items-center gap-2 text-gray-600 text-sm">
                   <Calendar className="w-4 h-4" />
                   {item.Date}
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Grid className="w-4 h-4" />
-                  {item.Type}
-                </div>
-                <div className="mt-2 text-sm text-gray-600">
-                  {item.Medium !== 'Not specified' && (
-                    <p className="italic">{item.Medium}</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Grid className="w-4 h-4" />
+                {item.Type}
+              </div>
+              {item.Medium !== 'Not specified' && (
+                <p className="mt-2 text-sm italic text-gray-600">{item.Medium}</p>
+              )}
+            </div>
           ))}
         </div>
       </div>
